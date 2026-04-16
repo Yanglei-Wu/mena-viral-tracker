@@ -25,7 +25,7 @@
 ## Running the Pipeline Manually
 
 ```bash
-python pipeline/run.py
+python3 -m pipeline.run
 ```
 
 Logs appear in stdout. First run will scrape ~200 posts per platform and score them.
@@ -47,7 +47,7 @@ crontab -e
 
 Add this line (replace paths with your actual values):
 ```
-0 7 * * * cd /Users/mt/Desktop/Work/Claude_Project/mena-viral-tracker && /usr/bin/python3 pipeline/run.py >> logs/run.log 2>&1
+0 7 * * * cd /Users/mt/Desktop/Work/Claude_Project/mena-viral-tracker && /usr/bin/python3 -m pipeline.run >> logs/run.log 2>&1
 ```
 
 Verify it was saved:

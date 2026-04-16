@@ -2,8 +2,11 @@
 Entry point for the daily MENA viral content pipeline.
 Run manually or via cron: python pipeline/run.py
 """
-import logging
 import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+import logging
 from datetime import date, datetime, timezone
 
 import config
