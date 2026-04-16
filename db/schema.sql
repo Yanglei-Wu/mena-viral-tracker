@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS posts (
     scraped_at     TEXT,
     scraped_date   TEXT,
     virality_score REAL,
+    ai_analysis     TEXT,
+    ai_analyzed_at  TEXT,
     UNIQUE(platform, post_id, scraped_date)
 );
 

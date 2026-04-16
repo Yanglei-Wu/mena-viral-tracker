@@ -12,10 +12,9 @@ from datetime import date, datetime, timezone
 import config
 from db.database import Database
 from pipeline.apify_client import ApifyWrapper
+from pipeline.analyzer import analyze_posts
 from pipeline.processor import compute_virality_scores
-from pipeline.scrapers.instagram import InstagramScraper
 from pipeline.scrapers.tiktok import TikTokScraper
-from pipeline.scrapers.youtube import YouTubeScraper
 
 logging.basicConfig(
     level=logging.INFO,
@@ -33,41 +32,17 @@ def run_pipeline() -> None:
 
     all_posts = []
 
-    # TikTok
+    # TikTok — top 10 videos per country across 5 MENA countries
     log.info("Fetching TikTok posts...")
     try:
         scraper = TikTokScraper(apify)
-        posts = scraper.fetch(config.TIKTOK_HASHTAGS, config.MAX_POSTS_PER_PLATFORM, config.TIKTOK_PROXY_COUNTRIES)
+        posts = scraper.fetch(config.TIKTOK_HASHTAGS, config.TIKTOK_MAX_POSTS, config.TIKTOK_PROXY_COUNTRIES)
         log.info(f"  TikTok: {len(posts)} posts fetched (countries: {', '.join(config.TIKTOK_PROXY_COUNTRIES)})")
         db.log_run(today, "tiktok", len(posts), "success")
         all_posts.extend(posts)
     except Exception as e:
         log.error(f"  TikTok scrape failed: {e}")
         db.log_run(today, "tiktok", 0, "error", str(e))
-
-    # Instagram
-    log.info("Fetching Instagram posts...")
-    try:
-        scraper = InstagramScraper(apify)
-        posts = scraper.fetch(config.INSTAGRAM_HASHTAGS, config.MAX_POSTS_PER_PLATFORM)
-        log.info(f"  Instagram: {len(posts)} posts fetched")
-        db.log_run(today, "instagram", len(posts), "success")
-        all_posts.extend(posts)
-    except Exception as e:
-        log.error(f"  Instagram scrape failed: {e}")
-        db.log_run(today, "instagram", 0, "error", str(e))
-
-    # YouTube
-    log.info("Fetching YouTube posts...")
-    try:
-        scraper = YouTubeScraper(apify)
-        posts = scraper.fetch(config.YOUTUBE_SEARCH_QUERIES, config.MAX_POSTS_PER_PLATFORM)
-        log.info(f"  YouTube: {len(posts)} posts fetched")
-        db.log_run(today, "youtube", len(posts), "success")
-        all_posts.extend(posts)
-    except Exception as e:
-        log.error(f"  YouTube scrape failed: {e}")
-        db.log_run(today, "youtube", 0, "error", str(e))
 
     if not all_posts:
         log.warning("No posts collected. Exiting.")
@@ -78,6 +53,11 @@ def run_pipeline() -> None:
     scored = compute_virality_scores(all_posts)
     db.insert_posts(scored)
     log.info("Posts saved to database.")
+
+    # AI video analysis — use each post's UTC scrape date to match insert_posts
+    log.info(f"Running Gemini video analysis on {len(scored)} posts (~25-30 min)...")
+    analyze_posts(scored, db)
+    log.info("AI analysis complete.")
 
     # Push to Google Sheets
     try:

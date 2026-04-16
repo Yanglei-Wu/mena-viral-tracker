@@ -21,6 +21,15 @@ class Database:
         schema = schema_path.read_text()
         with self._connect() as conn:
             conn.executescript(schema)
+            # Migration: add AI analysis columns if upgrading from older schema
+            existing_cols = {
+                row[1]
+                for row in conn.execute("PRAGMA table_info(posts)").fetchall()
+            }
+            if "ai_analysis" not in existing_cols:
+                conn.execute("ALTER TABLE posts ADD COLUMN ai_analysis TEXT")
+            if "ai_analyzed_at" not in existing_cols:
+                conn.execute("ALTER TABLE posts ADD COLUMN ai_analyzed_at TEXT")
 
     def insert_posts(self, posts: list[Post]) -> None:
         rows = [
@@ -103,6 +112,29 @@ class Database:
                 (run_date.isoformat(), platform, posts_fetched, status, error),
             )
 
+    def save_analysis(
+        self,
+        platform: str,
+        post_id: str,
+        scraped_date: str,
+        analysis: str,
+        analyzed_at: str,
+    ) -> None:
+        with self._connect() as conn:
+            cursor = conn.execute(
+                """
+                UPDATE posts
+                   SET ai_analysis = ?, ai_analyzed_at = ?
+                 WHERE platform = ? AND post_id = ? AND scraped_date = ?
+                """,
+                (analysis, analyzed_at, platform, post_id, scraped_date),
+            )
+            if cursor.rowcount == 0:
+                import logging
+                logging.getLogger(__name__).warning(
+                    f"save_analysis matched 0 rows for {platform}/{post_id}/{scraped_date} — analysis not saved"
+                )
+
     def log_sheets_push(self, run_date: date, rows_pushed: int) -> None:
         now = datetime.now(timezone.utc).isoformat()
         with self._connect() as conn:
@@ -129,6 +161,8 @@ def _row_to_post(row: sqlite3.Row) -> Post:
         posted_at=_parse_dt(row["posted_at"]),
         scraped_at=_parse_dt(row["scraped_at"]),
         virality_score=row["virality_score"] or 0.0,
+        ai_analysis=row["ai_analysis"] if row["ai_analysis"] else None,
+        ai_analyzed_at=_parse_dt(row["ai_analyzed_at"]),
     )
 
 

@@ -20,6 +20,8 @@ class Post:
     posted_at: Optional[datetime]
     scraped_at: Optional[datetime]
     virality_score: float = 0.0
+    ai_analysis: Optional[str] = None
+    ai_analyzed_at: Optional[datetime] = None
 
 
 def compute_virality_scores(posts: list[Post]) -> list[Post]:

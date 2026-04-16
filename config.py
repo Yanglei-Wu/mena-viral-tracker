@@ -11,8 +11,9 @@ TIKTOK_ACTOR_ID = "clockworks/tiktok-scraper"
 INSTAGRAM_ACTOR_ID = "apify/instagram-hashtag-scraper"
 YOUTUBE_ACTOR_ID = "streamers/youtube-scraper"
 
-# Posts to fetch per platform per run (controls Apify cost)
-MAX_POSTS_PER_PLATFORM = 200
+# TikTok: top N videos per country × 5 MENA countries
+TIKTOK_TOP_N_PER_COUNTRY = 10
+TIKTOK_MAX_POSTS = TIKTOK_TOP_N_PER_COUNTRY * 5  # 50 total
 
 # MENA proxy countries for TikTok (ISO 3166-1 alpha-2 codes)
 # Each country gets an equal share of MAX_POSTS_PER_PLATFORM
@@ -39,3 +40,7 @@ SHEETS_TOP_N = 20  # posts pushed to Google Sheets per daily run
 
 # Database
 DB_PATH = os.getenv("DB_PATH", "data/tracker.db")
+
+# Gemini AI Analysis
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")  # empty string = skip analysis gracefully
+GEMINI_MODEL = "gemini-2.5-flash-lite"

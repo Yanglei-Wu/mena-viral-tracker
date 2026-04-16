@@ -59,6 +59,7 @@ df = pd.DataFrame([{
     "url": p.url,
     "caption": p.caption[:120] + "..." if p.caption and len(p.caption) > 120 else p.caption,
     "engagement_rate": round((p.likes + p.comments + p.shares) / p.views * 100, 2) if p.views > 0 else 0,
+    "ai_analysis": p.ai_analysis,
 } for p in posts])
 
 # ── View: Today's Trends ─────────────────────────────────────────────────────
@@ -86,6 +87,9 @@ _{row['caption']}_
 
 [Open post]({row['url']})
 """)
+            if row.get("ai_analysis"):
+                with st.expander("🤖 Why it went viral"):
+                    st.markdown(row["ai_analysis"])
             st.divider()
 
 # ── View: Leaderboard ────────────────────────────────────────────────────────
@@ -106,6 +110,13 @@ st.dataframe(
         "views": st.column_config.NumberColumn("Views", format="%d"),
     },
 )
+
+ai_posts = [p for p in posts if p.ai_analysis]
+if ai_posts:
+    st.markdown("#### AI Analysis Details")
+    for post in ai_posts:
+        with st.expander(f"🤖 @{post.author} — score {post.virality_score:.2f}"):
+            st.markdown(post.ai_analysis)
 
 # ── View: Platform Breakdown ─────────────────────────────────────────────────
 st.subheader("Platform Breakdown")
