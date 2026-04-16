@@ -14,6 +14,10 @@ YOUTUBE_ACTOR_ID = "streamers/youtube-scraper"
 # Posts to fetch per platform per run (controls Apify cost)
 MAX_POSTS_PER_PLATFORM = 200
 
+# MENA proxy countries for TikTok (ISO 3166-1 alpha-2 codes)
+# Each country gets an equal share of MAX_POSTS_PER_PLATFORM
+TIKTOK_PROXY_COUNTRIES = ["SA", "EG", "AE", "IQ", "MA"]  # Saudi, Egypt, UAE, Iraq, Morocco
+
 # Arabic + pan-MENA hashtags to scrape
 TIKTOK_HASHTAGS = [
     "ترند", "فيروسي", "مشهور", "تيك_توك", "viral", "trending",

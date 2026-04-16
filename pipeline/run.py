@@ -37,8 +37,8 @@ def run_pipeline() -> None:
     log.info("Fetching TikTok posts...")
     try:
         scraper = TikTokScraper(apify)
-        posts = scraper.fetch(config.TIKTOK_HASHTAGS, config.MAX_POSTS_PER_PLATFORM)
-        log.info(f"  TikTok: {len(posts)} posts fetched")
+        posts = scraper.fetch(config.TIKTOK_HASHTAGS, config.MAX_POSTS_PER_PLATFORM, config.TIKTOK_PROXY_COUNTRIES)
+        log.info(f"  TikTok: {len(posts)} posts fetched (countries: {', '.join(config.TIKTOK_PROXY_COUNTRIES)})")
         db.log_run(today, "tiktok", len(posts), "success")
         all_posts.extend(posts)
     except Exception as e:
