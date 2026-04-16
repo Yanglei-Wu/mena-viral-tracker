@@ -1,0 +1,8 @@
+apify-client==1.8.1
+gspread==6.1.2
+google-auth==2.29.0
+streamlit==1.35.0
+plotly==5.22.0
+pandas==2.2.2
+python-dotenv==1.0.1
+pytest==8.2.0
