@@ -3,6 +3,8 @@ data/
 logs/
 __pycache__/
 *.pyc
-*.db
+**/*.db
 *.egg-info/
 .DS_Store
+.venv/
+venv/
