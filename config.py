@@ -8,8 +8,6 @@ APIFY_API_TOKEN = os.environ["APIFY_API_TOKEN"]
 
 # Actor IDs
 TIKTOK_ACTOR_ID = "clockworks/tiktok-scraper"
-INSTAGRAM_ACTOR_ID = "apify/instagram-hashtag-scraper"
-YOUTUBE_ACTOR_ID = "streamers/youtube-scraper"
 
 # TikTok: top N videos per country × 5 MENA countries
 TIKTOK_TOP_N_PER_COUNTRY = 10
@@ -24,15 +22,6 @@ TIKTOK_HASHTAGS = [
     "ترند", "فيروسي", "مشهور", "تيك_توك", "viral", "trending",
     "السعودية", "مصر", "الإمارات", "العراق", "المغرب",
 ]
-INSTAGRAM_HASHTAGS = [
-    "ترند", "فيروسي", "ريلز", "انستقرام", "viral", "trending",
-    "السعودية", "مصر", "الإمارات",
-]
-YOUTUBE_SEARCH_QUERIES = [
-    "ترند عربي", "فيديو فيروسي", "أكثر مشاهدة", "عربي 2026",
-    "arabic trending", "viral arabic",
-]
-
 # Google Sheets
 GOOGLE_CREDENTIALS_PATH = os.environ["GOOGLE_CREDENTIALS_PATH"]
 GOOGLE_SHEET_ID = os.environ["GOOGLE_SHEET_ID"]

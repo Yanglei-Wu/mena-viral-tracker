@@ -29,7 +29,7 @@ start_date, end_date = st.sidebar.date_input(
     max_value=today,
 )
 
-platform_options = ["All", "tiktok", "instagram", "youtube"]
+platform_options = ["All", "tiktok"]
 selected_platform = st.sidebar.selectbox("Platform", platform_options)
 min_score = st.sidebar.slider("Min virality score", 0.0, 2.0, 0.0, step=0.1)
 
@@ -77,7 +77,7 @@ else:
     for i, (_, row) in enumerate(top10.iterrows()):
         col = cols[i % 2]
         with col:
-            platform_emoji = {"tiktok": "🎵", "instagram": "📸", "youtube": "▶️"}.get(row["platform"], "🌐")
+            platform_emoji = {"tiktok": "🎵"}.get(row["platform"], "🌐")
             st.markdown(f"""
 **{platform_emoji} {row['platform'].capitalize()}** — score: `{row['virality_score']}`
 

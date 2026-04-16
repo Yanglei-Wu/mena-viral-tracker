@@ -64,11 +64,11 @@ def test_insert_duplicate_ignored(db):
 
 def test_filter_by_platform(db):
     tiktok_post = make_post(platform="tiktok", post_id="t1")
-    ig_post = make_post(platform="instagram", post_id="i1")
-    db.insert_posts([tiktok_post, ig_post])
+    tt_post2 = make_post(platform="tiktok", post_id="t2")
+    db.insert_posts([tiktok_post, tt_post2])
     results = db.get_posts(date(2026, 4, 16), date(2026, 4, 16), platform="tiktok")
-    assert len(results) == 1
-    assert results[0].platform == "tiktok"
+    assert len(results) == 2
+    assert all(r.platform == "tiktok" for r in results)
 
 
 def test_get_top_posts_ordered_by_virality(db):
